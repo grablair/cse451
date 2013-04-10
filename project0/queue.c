@@ -47,7 +47,7 @@ static queue_link* queue_new_element(queue_element* elem) {
 
 void queue_append(queue* q, queue_element* elem) {
   assert(q != NULL);
-  
+
   if (!q->head) {
     q->head = queue_new_element(elem);
     return;
@@ -73,7 +73,7 @@ bool queue_remove(queue* q, queue_element** elem_ptr) {
   *elem_ptr = q->head->elem;
   old_head = q->head;
   q->head = q->head->next;
-  
+
   free(old_head);
 
   return true;
@@ -115,11 +115,11 @@ void queue_reverse(queue* q) {
   // If it's empty, nothing is reversible.
   if (queue_is_empty(q))
     return;
-  
+
   // Find the last link in the queue.
   queue_link* last;
   for (last = q->head; last->next; last = last->next) {}
-  
+
   // Reverse the queue.
   while (q->head != last) {
     queue_link* tmp = q->head;
@@ -132,15 +132,15 @@ void queue_reverse(queue* q) {
 void queue_sort(queue* q, queue_compare qc) {
   // New head for the queue.
   queue_link *nh = q->head;
-  
+
   if (!nh)
     return;
-  
+
   queue_link *cur = nh->next, *curnext;
   nh->next = NULL;
   for (; cur; cur = curnext) {
     curnext = cur->next;
-    
+
     if (qc(cur->elem, nh->elem) < 0) {
       // current value belongs at the beginning of the queue.
       cur->next = nh;
@@ -149,33 +149,32 @@ void queue_sort(queue* q, queue_compare qc) {
       // belongs somewhere else.
       queue_link *nhcur;
       int placed = 0;
-      
-      // Cycle through the new-headed list to find the 
+
+      // Cycle through the new-headed list to find the
       // correct location for the current value.
       for (nhcur = nh; nhcur->next; nhcur = nhcur->next) {
-        
         // If the current element is the same as the
         // element we are currently at in the new list,
         // or less than the next one, we know it belongs
         // next in line.
-        if (qc(cur->elem, nhcur->next->elem) < 0 || 
+        if (qc(cur->elem, nhcur->next->elem) < 0 ||
               !qc(cur->elem, nhcur->elem)) {
           cur->next = nhcur->next;
           nhcur->next = cur;
-          
+
           nhcur = cur;
           placed = 1;
-          
+
           break;
         }
       }
-      
+
       if (!placed) {
         nhcur->next = cur;
         cur->next = NULL;
       }
     }
   }
-  
+
   q->head = nh;
 }
