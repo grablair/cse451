@@ -84,6 +84,8 @@ int main(int argc, char* argv[]) {
   } else {
     printf("%s -> %" PRIi64 " (unexpected!)\n", kNotFoundKey, *v);
   }
+  
+  print_all(ht);
 
   /* Destroy the hash table and free things that we've allocated. Because
    * we allocated both the keys and the values, we instruct the hash map
