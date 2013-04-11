@@ -12,7 +12,7 @@ int compare_two(queue_element* e1, queue_element* e2) {
   int x = *(int*) e1;
   int y = *(int*) e2;
   
-  printf("Comparing %d, %d\n", x, y);
+  //printf("Comparing %d, %d\n", x, y);
   
   if (x < y)
     return -1;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
   int x = 4;
   int y = 3;
-  int z = 3;
+  int z = 4;
   int t = 3;
   queue_append(q, &x);
   queue_append(q, &y);
@@ -40,13 +40,33 @@ int main(int argc, char* argv[]) {
   
   queue_reverse(q);
   
+  printf("Queue size is %zu\n", queue_size(q));
+  
   index = 0;
   queue_apply(q, show_one, &index);
   
   queue_sort(q, compare_two);
   
+  printf("Queue size is %zu\n", queue_size(q));
+  
   index = 0;
   queue_apply(q, show_one, &index);
+  
+  int *elem;
+  queue_remove(q, (queue_element **) &elem);
+  
+  printf("Queue size is %zu\n", queue_size(q));
+    
+  index = 0;
+  queue_apply(q, show_one, &index);
+  
+  while (!queue_is_empty(q)) {
+    queue_remove(q, (queue_element **) &elem);
+  }
+  
+  printf("Queue size is %zu\n", queue_size(q));
+  
+  free(q);
   
   return 0;
 }

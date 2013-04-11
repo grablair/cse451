@@ -85,8 +85,26 @@ int main(int argc, char* argv[]) {
     printf("%s -> %" PRIi64 " (unexpected!)\n", kNotFoundKey, *v);
   }
   
-  print_all(ht);
-
+  hash_remove(ht, "String 22", (void**) &removed_key, (void**) &removed_value);
+  free(removed_key);
+  free(removed_value);
+  
+  hash_remove(ht, "String 69", (void**) &removed_key, (void**) &removed_value);
+  free(removed_key);
+  free(removed_value);
+  
+  /* Second phase: look up some data. */
+  printf("\nLookup phase:\n");
+  char strbuf2[kBufferLength];
+  for (int i = N - 1; i >= 0; i--) {
+    snprintf(strbuf2, kBufferLength, "String %d", i);
+    if (!hash_lookup(ht, strbuf2, (void**) &v)) {
+      printf("Entry for %s not found\n", strbuf2);
+    } else {
+      printf("%s -> %" PRIi64 "\n", strbuf2, *v);
+    }
+  }
+  
   /* Destroy the hash table and free things that we've allocated. Because
    * we allocated both the keys and the values, we instruct the hash map
    * to free both.

@@ -74,6 +74,4 @@ bool hash_remove(hash_table* ht, const void* key,
  */
 void hash_destroy(hash_table* ht, bool free_keys, bool free_values);
 
-void print_all(hash_table* ht);
-
 #endif  // _HASH_H_
