@@ -1606,10 +1606,10 @@ struct task_struct {
 	struct uprobe_task *utask;
 #endif
 
-	unsigned long fork_count;
-	unsigned long vfork_count;
-	unsigned long execve_count;
-	unsigned long clone_count;
+	int fork_count;
+	int vfork_count;
+	int execve_count;
+	int clone_count;
 };
 
 /* Future-safe accessor for struct task_struct's cpus_allowed. */
