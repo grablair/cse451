@@ -2,11 +2,7 @@
 #include <linux/thread_info.h>
 #include <linux/list.h>
 
-extern struct task_struct *find_task_by_vpid(pid_t nr);
-extern struct task_struct *find_task_by_pid_ns(pid_t nr,
-		struct pid_namespace *ns);
-
-void get_counts(struct task_struct *cur_ts, unsigned long *counts) {
+void get_counts(struct task_struct *cur_ts, int *counts) {
 	struct task_struct *child_ts;
 
 	counts[0] += cur_ts->fork_count;
@@ -23,7 +19,7 @@ void get_counts(struct task_struct *cur_ts, unsigned long *counts) {
 // counts[1] => vfork counts
 // counts[2] => execve counts
 // counts[3] => clone counts
-SYSCALL_DEFINE1 (get_fork_calls, unsigned long *, counts) {
+SYSCALL_DEFINE1 (get_fork_calls, int *, counts) {
 	counts[0] = 0;
 	counts[1] = 0;
 	counts[2] = 0;
