@@ -1298,6 +1298,11 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->memcg_batch.memcg = NULL;
 #endif
 
+	p->fork_count = 0;
+	p->vfork_count = 0;
+	p->clone_count = 0;
+	p->execve_count = 0;
+
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	sched_fork(p);
 
@@ -1575,12 +1580,19 @@ long do_fork(unsigned long clone_flags,
 	 * for the type of forking is enabled.
 	 */
 	if (!(clone_flags & CLONE_UNTRACED)) {
-		if (clone_flags & CLONE_VFORK)
+		if (clone_flags & CLONE_VFORK) {
 			trace = PTRACE_EVENT_VFORK;
-		else if ((clone_flags & CSIGNAL) != SIGCHLD)
+			printk("vfork called\n");
+			current->vfork_count++;
+		} else if ((clone_flags & CSIGNAL) != SIGCHLD) {
 			trace = PTRACE_EVENT_CLONE;
-		else
+			printk("clone called\n");
+			current->clone_count++;
+		} else {
 			trace = PTRACE_EVENT_FORK;
+			printk("fork called\n");
+			current->fork_count++;
+		}
 
 		if (likely(!ptrace_event_enabled(current, trace)))
 			trace = 0;
@@ -1636,7 +1648,6 @@ pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags)
 #ifdef __ARCH_WANT_SYS_FORK
 SYSCALL_DEFINE0(fork)
 {
-printk("forkg kernel: %d\n", current->pid);
 #ifdef CONFIG_MMU
 	return do_fork(SIGCHLD, 0, 0, NULL, NULL);
 #else
@@ -1649,7 +1660,6 @@ printk("forkg kernel: %d\n", current->pid);
 #ifdef __ARCH_WANT_SYS_VFORK
 SYSCALL_DEFINE0(vfork)
 {
-	current->vfork_count++;
 	return do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0, 
 			0, NULL, NULL);
 }
@@ -1676,8 +1686,6 @@ SYSCALL_DEFINE5(clone, unsigned long, clone_flags, unsigned long, newsp,
 	long ret = do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr);
 	asmlinkage_protect(5, ret, clone_flags, newsp,
 			parent_tidptr, child_tidptr, tls_val);
-	current->clone_count++;
-	printk("cloneg kernel: %d", current->pid);
 	return ret;
 }
 #endif
