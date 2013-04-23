@@ -9,14 +9,53 @@
 
 #define EXIT_COMMAND "exit"
 #define CHDIR_COMMAND "chdir"
+#define MAX_ARGS 6
+
+int exec_command(char* input, int old_exit_status);
+
+int read_from_file(char* filename, int old_exit_status){
+  char* line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  if(filename == NULL){
+    printf("No file name given\n");
+    return old_exit_status;
+  }
+  FILE* fd = fopen(filename, "r");
+  if(fd == NULL){
+    printf("File name error");
+    return old_exit_status;
+  }
+  while((read = getline(&line, &len, fd)) != -1){ 
+    if(line[0] == '\n'){
+      continue;
+    }else if(line[read-1] == '\n'){
+      line[read-1] = '\0';
+    }
+    old_exit_status = exec_command(line, old_exit_status);
+    
+    }
+
+  free(line);
+  return old_exit_status;
+}
 
 int exec_command(char* input, int old_exit_status){
   //tokenize input
-  //char* command = strtok(input, " ");
-    char** args = calloc(20, sizeof(char*));
+  int num_args = MAX_ARGS;  
+  char** args = calloc(num_args, sizeof(char*));
+    
+    if(args == NULL){
+      printf("Error allocating memory\n");
+      return old_exit_status;
+    }
     int i;
     char* arg = strtok(input, " ");
     for(i = 0; arg != NULL; i++){
+      if(i >= num_args - 1){  
+	num_args *= 2;
+	args = realloc(args, num_args);
+      }
       args[i] = arg;
       arg = strtok(NULL, " ");
     }
@@ -37,13 +76,14 @@ int exec_command(char* input, int old_exit_status){
       }
     }else if(!strncmp(".", command, 2)){
       //read from file
-      
+      old_exit_status = read_from_file(args[1], old_exit_status);
 
     }else if(!strncmp(EXIT_COMMAND, command, 5)){   //exit command
       if(args[1] != NULL){         //exit with specified value
 	int x = atoi(args[1]);
 	free(input);
 	free(args);
+	printf("exit: %d\n", x);
 	exit(x);                //CHANGE TO exit(x)
       }
       free(input);
@@ -65,14 +105,13 @@ int exec_command(char* input, int old_exit_status){
 	  exit_status = WEXITSTATUS(status);
 	
 	}
-	free(input);
+	
 	free(args);
 	return exit_status;
       }
       
     }
 
-    free(input);
     free(args);
     return old_exit_status;
 }
@@ -85,11 +124,12 @@ int main(int argc, char * argv[], char * envp[]){
     //read line of input
     char* input = readline("CSE451Shell\% ");
     if(!strcmp(input, "")){
-      free(input);               //SEGFAULT on no input
+      free(input);               
       continue;
     }
     
     exit_stat = exec_command(input, exit_stat);
+    free(input);
   }
 
   
