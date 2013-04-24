@@ -1682,7 +1682,6 @@ SYSCALL_DEFINE3(execve,
 		putname(path);
 	}
 	current->execve_count++;
-	printk("execve called\n");
 	return error;
 }
 #ifdef CONFIG_COMPAT

@@ -1298,6 +1298,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->memcg_batch.memcg = NULL;
 #endif
 
+	/* Reset fork/exec/clone counts for new task struct */
 	p->fork_count = 0;
 	p->vfork_count = 0;
 	p->clone_count = 0;
@@ -1582,15 +1583,15 @@ long do_fork(unsigned long clone_flags,
 	if (!(clone_flags & CLONE_UNTRACED)) {
 		if (clone_flags & CLONE_VFORK) {
 			trace = PTRACE_EVENT_VFORK;
-			printk("vfork called\n");
+			//printk("vfork called\n");
 			current->vfork_count++;
 		} else if ((clone_flags & CSIGNAL) != SIGCHLD) {
 			trace = PTRACE_EVENT_CLONE;
-			printk("clone called\n");
+			//printk("clone called\n");
 			current->clone_count++;
 		} else {
 			trace = PTRACE_EVENT_FORK;
-			printk("fork called\n");
+			//printk("fork called\n");
 			current->fork_count++;
 		}
 
