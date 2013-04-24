@@ -1,0 +1,15 @@
+
+
+
+c. Making the chdir internal is required because the chdir() call must be made within the 
+   shell process. Calling it from a forked process will do nothing to the working directory
+   of the shell.
+
+   The exit command for the same reason.  If it is internal, you can simply call the exit()
+   function and do not have to try to kill the shell process from a forked process.
+
+   We implemented '.' internally.  When the command is given, the shell calls a locally
+   defined function that simply reads a line and passes it to exececute_command call within 
+   a loop. Doing it this way saves the overhead of forking a new process.  It basically just 
+   transfers control from the user entry loop to a file entry loop which operates very 
+   similarly.
