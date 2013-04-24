@@ -1,5 +1,21 @@
+Graham Arthur Blair
+grahamb5
 
+Michael Davis
+davism78
 
+a. Our syscall takes two arguments: a pid and the address of an integer array who's minimum 
+   length is four. It sets the first four integers to the fork, vfork, execve, and clone
+   counts of the process who's pid is the parameter pid, respectively. The only restrictions
+   are that the pid must refer to an "alive" process, and the integer array is at least of
+   length four.
+
+b. First, the user calls our system call with a pid and an array. We then gather the task
+   struct of the given pid. We then recurse through that task struct and all of it's
+   children to create a total count of forks, vforks, execves and clones. The way we keep
+   track of dead processes is that we modified the do_exit call to increment the parent's
+   counts. We also modified all of the syscalls necessary (fork, vfork, execve, clone) to
+   increment the counts for each process independently.
 
 c. Making the chdir internal is required because the chdir() call must be made within the 
    shell process. Calling it from a forked process will do nothing to the working directory
