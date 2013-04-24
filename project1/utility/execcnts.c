@@ -12,14 +12,15 @@ void usage() {
 int main(int argc, char **argv) {
 	if (argc < 2) usage();
 
-	int pArray[] = {0, 0, 0, 0};
+	int pArray[4];
 	getExecCounts(getpid(), pArray);
 
 	int child_pid;
 	if (child_pid = fork()) {
 		wait(child_pid);
-		int pArray2[] = {-1, 0, 0, 0};	// Set to -1 because of utility's fork
+		int pArray2[4];
 		getExecCounts(getpid(), pArray2);
+		pArray2[0]--;	// For the utility's fork.
 		printf("\n%d\tforks\n", pArray2[0] - pArray[0]);
 		printf("%d\tvforks\n", pArray2[1] - pArray[1]);
 		printf("%d\texecves\n", pArray2[2] - pArray[2]);
