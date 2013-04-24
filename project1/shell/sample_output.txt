@@ -1,0 +1,15 @@
+[davism78@attu2 shell]$ ./fsh
+CSE451Shell% date
+Wed Apr 24 15:01:10 PDT 2013
+CSE451Shell% cat testfile.txt 
+THIS IS A TEST FILE
+CSE451Shell% chdir
+CSE451Shell% pwd
+/homes/iws/davism78
+CSE451Shell% chdir /tmp
+CSE451Shell% pwd
+/tmp
+CSE451Shell% exit 5
+exit: 5
+[davism78@attu2 shell]$ echo $?
+5
