@@ -1,0 +1,41 @@
+Graham Arthur Blair
+grahamb5
+
+Michael Davis
+davism78
+
+
+Below are all the files we modified. The paths are relative to the root
+directory of the kernel source.
+
+1. exec.c -- fs/exec.c
+   We modified exec.c to increment the execve count whenever it is called,
+   which is necessary to keep track of the counts.
+
+2. exit.c -- kernel/exit.c
+   We modified exit.c to deal with processes dying. We took the exec counts
+   of the dying process and added it to it's parent. This is necessary 
+   because we would lose those counts otherwise.
+
+3. fork.c -- kernel/fork.c
+   We modified fork.c to increment the fork, vfork and clone counts when
+   they are called. This is necessary for bookkeeping.
+
+4. get_fork_calls.c -- kernel/get_fork_calls.c
+   This is the syscall source file we added. It contains our syscall (id 314).
+
+5. init_task.h -- include/linux/init_task.h
+   This is the initial task header, which we modified to zero out the 
+   initial task_struct's counts. This is necessary or the counts could start
+   at odd values.
+
+6. sched.h -- include/linux/sched.h
+   We modified sched.h to add the necessary fields to the task_struct struct.
+   This is necessary because our counts need to go somewhere.
+
+7. syscall_64.tbl -- arch/x86/syscalls/syscall_64.tbl
+   This is the table we added our syscall to.
+
+8. syscalls.h -- include/linux/syscalls.h
+   This is the syscalls header, which we added our syscall asmlinkage 
+   declaration to.
